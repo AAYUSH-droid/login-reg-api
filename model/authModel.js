@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Email is Required'],
     unique: true,
+    validate: [validator.isEmail, 'Please Enter a valid Email'],
   },
   password: {
     type: String,
@@ -21,6 +24,8 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Address is Required'],
   },
 });
+
+userSchema.plugin(uniqueValidator);
 
 userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
